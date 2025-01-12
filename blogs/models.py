@@ -1,9 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth.models import User
 
 from recipe.models import BaseModel
 
-
+User = get_user_model()
 class BlogCategoryModel(BaseModel):
     title = models.CharField(max_length=128)
 
