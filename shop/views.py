@@ -1,22 +1,31 @@
 from django.shortcuts import render
-from .models import BlogShopModel
+
+from shop.models import ProductCategoryModel,ProductModel
 
 
-def products_page_view(request):
-    blog_shops = BlogShopModel.objects.all()
+def product_list_view(request):
+    categories = ProductCategoryModel.objects.all()
+    products = ProductModel.objects.all()
+    q = request.GET.get('q')
+    if q:
+        products = products.filter(title__icontains=q)
+        
     context = {
-        blog_shops : 'blog_shops'
+        'products':products,
+        'categories':categories,
+        
     }
     return render(request,'shop/shop.html',context)
 
-
 def product_detail_view(request,pk):
-    blog_shop = BlogShopModel.objects.filter(id=pk).first()
-    if blog_shop is not None:
-        context = {
-            "blog_shop":blog_shop
-        }
-        return render(request,'shop/single-shop.html',context)
-    else:
+    try:
+        product = ProductModel.objects.get(id=pk)
+    except ProductModel.DoesNotExist:
         return render(request,'pages/404.html')
+    related_products = ProductModel.objects.filter(categories__in=[cat.id for cat in product.categories.all()])
+    context = {
+        "product":product,
+        "related_products" : related_products
+    }
 
+    return render(request,'shop/single-shop.html',context)

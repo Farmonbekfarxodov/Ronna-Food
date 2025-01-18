@@ -1,10 +1,21 @@
 from django.contrib import admin
+from .models import ProductCategoryModel, ProductImageModel, ProductModel
 
-from .models import BlogShopModel
+# Admin for ProductCategoryModel
+@admin.register(ProductCategoryModel)
+class ProductCategoryModelAdmin(admin.ModelAdmin):
+    list_display = ['title', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['title']
 
-admin.site.register(BlogShopModel)
-class BlogShopAdmin(admin.ModelAdmin):
-    list_display = ('name','price','quantity','is_active')
-    list_filter =  ('is_active')
-    search_fields = ('name','description')
-    ordering = ('name',)
+# Inline admin for ProductImageModel
+class ProductImageModelAdmin(admin.StackedInline):
+    model = ProductImageModel
+
+# Admin for ProductModel
+@admin.register(ProductModel)
+class ProductModelAdmin(admin.ModelAdmin):
+    list_display = ['title', 'price', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['title']
+    inlines = [ProductImageModelAdmin]  # Reference the inline class here

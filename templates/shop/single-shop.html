@@ -1,7 +1,7 @@
-{%extends 'layouts/base.html'%}
-{%load static%}
-{%block content%}
-    <!-- Inne Page Banner Area Start Here -->
+{% extends 'layouts/base.html'%}
+{% load static %}
+{% block content %}
+        <!-- Inne Page Banner Area Start Here -->
         <section class="inner-page-banner bg-common" data-bg-image="{% static 'img/figure/inner-page-banner1.jpg' %}">
             <div class="container">
                 <div class="row">
@@ -10,7 +10,7 @@
                             <h1>Single Product Page</h1>
                             <ul>
                                 <li>
-                                    <a href="index.html">Home</a>
+                                    <a href="{% url 'recipe:home'%}">Home</a>
                                 </li>
                                 <li>Product Details</li>
                             </ul>
@@ -29,34 +29,20 @@
                             <div class="row">
                                 <div class="col-lg-9 col-12 order-lg-2">
                                     <div class="tab-content">
-                                        <div class="tab-pane fade active show" id="related1">
-                                            <a href="#"><img alt="single" src="{% static 'img/product/shop-figure14.png' %}" data-zoom-image="{% static 'img/product/product27b.png' %}"></a>
+                                        {% for image in product.images.all %}
+                                        <div class="tab-pane fade {% if forloop.counter == 1 %} active show {% endif %}" id="related{{ forloop.counter }}">
+                                            <a href="#"><img alt="single" src="{{ image.image.url }}" data-zoom-image="{{ image.image.url }}"></a>
                                         </div>
-                                        <div class="tab-pane fade" id="related2">
-                                            <a href="#"><img alt="single" src="{% static 'img/product/shop-figure15.png' %}" data-zoom-image="{% static 'img/product/product27-1b.png' %}"></a>
-                                        </div>
-                                        <div class="tab-pane fade" id="related3">
-                                            <a href="#"><img alt="single" src="{% static 'img/product/shop-figure16.png' %}" data-zoom-image="{% static 'img/product/product27-2b.png' %}"></a>
-                                        </div>
-                                        <div class="tab-pane fade" id="related4">
-                                            <a href="#"><img alt="single" src="{% static 'img/product/shop-figure17.png' %}" data-zoom-image="{% static 'img/product/product27-3b.png' %}"></a>
-                                        </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 <div class="col-lg-3 col-12 order-lg-1">
                                     <ul class="nav tab-nav tab-nav-list">
+                                        {% for image in product.images.all %}
                                         <li class="nav-item">
-                                            <a class="active" href="#related1" data-toggle="tab" aria-expanded="false"><img alt="related1" src="{% static 'img/product/shop-figure10.png' %}" class="img-fluid"></a>
+                                            <a {% if forloop.counter == 1 %} class="active" {% endif %} href="#related{{forloop.counter}}" data-toggle="tab" aria-expanded="false"><img alt="related1" src="{{image.image.url}}" class="img-fluid"></a>
                                         </li>
-                                        <li class="nav-item">
-                                            <a href="#related2" data-toggle="tab" aria-expanded="false"><img alt="related2" src="{% static 'img/product/shop-figure11.png' %}" class="img-fluid"></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="#related3" data-toggle="tab" aria-expanded="false"><img alt="related3" src="{% static 'img/product/shop-figure12.png' %}" class="img-fluid"></a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a href="#related4" data-toggle="tab" aria-expanded="false"><img alt="related4" src="{% static 'img/product/shop-figure13.png' %}" class="img-fluid"></a>
-                                        </li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>
@@ -64,20 +50,16 @@
                     </div>
                     <div class="col-lg-5 col-12">
                         <div class="single-shop-content">
-                            <h2 class="item-title">Kitchen Key Spone</h2>
-                            <ul class="item-rate">
-                                <li><i class="fas fa-star"></i></li>
-                                <li><i class="fas fa-star"></i></li>
-                                <li><i class="fas fa-star"></i></li>
-                                <li><i class="fas fa-star"></i></li>
-                                <li><i class="fas fa-star"></i></li>
-                                <li><a href="#">( 01 Reviews )</a></li>
-                            </ul>
-                            <div class="item-price">$60.00<span>$60.00</span></div>
+                            <h2 class="item-title">{{ product.title }}</h2>
+                        
+                            <div class="item-price">${{ product.discount_price }}<span>${{ product.price }}</span></div>
                             <ul class="entry-meta">
-                                <li>SKU: <span>BN3056</span></li>
-                                <li>Availablity: <span>Instock</span></li>
-                                <li>Category: <a href="#">Kitchen</a></li>
+                                <li>sku:<span>{{product.sku}}</span></li>
+                                <li>Availablity: <span>{% if product.is_stock %}Instock {% else %} Not available {% endif %}</span></li>
+                                <li>Category: 
+                                    {% for cat in product.categories.all %}
+                                    <a href="#">{{cat.title}}</a></li>
+                                    {% endfor %}
                             </ul>
                             <ul class="item-social">
                                 <li>Share With:</li>
@@ -89,7 +71,7 @@
                                 <li><a href="#"><i class="fab fa-youtube"></i></a></li>
                                 <li><a href="#"><i class="fab fa-behance"></i></a></li>
                             </ul>
-                            <p class="item-details">Working from home meant we couldsnack and coffee our breaksert change our desks or view, good, drink on the job, even spend the weather started getting. Working from home meant we couldsnack and coffee our breaksert change.</p>
+                            <p class="item-details">{{product.short_description}}</p>
                             <ul class="action-area1">
                                 <li id="quantity-holder">
                                     <div class="input-group quantity-holder">
@@ -112,26 +94,10 @@
                                 <li class="nav-item">
                                     <a class="active" href="#related5" data-toggle="tab" aria-expanded="false">Description</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a href="#related6" data-toggle="tab" aria-expanded="false">Features</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#related7" data-toggle="tab" aria-expanded="false">Reviews</a>
-                                </li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade active show" id="related5">
-                                    Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semperauris placerat eleifen deleo.
-                                </div>
-                                <div class="tab-pane fade" id="related6">
-                                    Gimply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five
-                                    centuries, but also the leap into electronic typesetting, remaining essentially unchanged mply dummy text of the printing and typesetting industry. Gimply dummy text of the printing and typesetting industry. Lorem Ipsum
-                                    has been the industry's standard dummy text ever since the when an unknown printer took.
-                                </div>
-                                <div class="tab-pane fade" id="related7">
-                                    Gimply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five
-                                    centuries, but also the leap into electronic typesetting, remaining essentially unchanged mply dummy text of the printing and typesetting industry. Gimply dummy text of the printing and typesetting industry. Lorem Ipsum
-                                    has been the industry's standard dummy text ever since the when an unknown printer took.
+                                 {{ product.long_description }}   
                                 </div>
                             </div>
                         </div>
@@ -149,10 +115,11 @@
                         data-r-medium-nav="false" data-r-medium-dots="true" data-r-large="4" data-r-large-nav="false"
                         data-r-large-dots="true" data-r-extra-large="4" data-r-extra-large-nav="false"
                         data-r-extra-large-dots="true">
+                        {% for r_product in related_products %}
                         <div class="shop-box-layout1">
                             <div class="mask-item bg--accent">
                                 <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure1.png' %}" alt="Product">
+                                    <img src="{{ r_product.image.url }}" alt="Product">
                                 </div>
                                 <ul class="action-items">
                                     <li>
@@ -173,237 +140,15 @@
                                 </ul>
                             </div>
                             <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
+                                <h3 class="item-title"><a href="single-shop.html">{{r_product.title}}</a></h3>
+                                <div class="item-price"><span class="currency">$</span>{{r_product.price}}</div>
                             </div>
                         </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure2.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure3.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure4.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure5.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure6.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure7.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure8.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
-                        <div class="shop-box-layout1">
-                            <div class="mask-item bg--accent">
-                                <div class="item-figure">
-                                    <img src="{% static 'img/product/shop-figure9.png' %}" alt="Product">
-                                </div>
-                                <ul class="action-items">
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-shopping-cart"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-exchange-alt"></i>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="fas fa-heart"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="item-content">
-                                <h3 class="item-title"><a href="single-shop.html">Kitchen Utensils</a></h3>
-                                <div class="item-price"><span class="currency">$</span>28.00</div>
-                            </div>
-                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
             </div>
         </section>
         <!-- Single Shop Page Area End Here -->
-{%endblock%}
+{% endblock %}

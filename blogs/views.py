@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from blogs.models import BlogModel
+from django.shortcuts import redirect, render
+from blogs.models import  BlogModel
+from blogs.form import BlogCommentModelForm
 
 
 
@@ -25,3 +26,18 @@ def blog_detail_view(request,pk):
         return render(request,'blogs/single-blog.html',context)
     else:
         return render(request,'pages/404.html')
+    
+
+def blog_comment_view(request,blog_id):
+    if request.method == 'POST':
+        try:
+            blog = BlogModel.objects.get(id=blog_id)
+        except BlogModel.DoesNotExist:
+            return render(request,'recipe:404.html')
+        
+        form = BlogCommentModelForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.blog = blog
+            comment.save()
+            return redirect('blogs:detail',pk=blog_id)
